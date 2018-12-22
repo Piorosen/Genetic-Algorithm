@@ -40,8 +40,8 @@ public class Dragon : MonoBehaviour
                 List<float> tmp = new List<float>();
                 for (int i = 0; i < 4; i++)
                 {
-                    tmp.Add(Random.Range(-20.0f, 40.0f));
-                    tmp.Add(Random.Range(-80.0f, 80.0f));
+                    tmp.Add(Random.Range(-15.0f, 30.0f));
+                    tmp.Add(Random.Range(-60.0f, 60.0f));
                 }
                 Genetic.Add(tmp);
             }
@@ -52,9 +52,10 @@ public class Dragon : MonoBehaviour
 
             for (int i = 0; i < Genetic.Count; i++)
             {
-                for (int k = 0; k < Genetic[i].Count; k++)
+                for (int k = 0; k < Genetic[i].Count / 2; k++)
                 {
-                    Genetic[i][k] += Random.Range(-10.0f, 10.0f) * transition;
+                    Genetic[i][k * 2] += Random.Range(-15.0f, 30.0f) * transition;
+                    Genetic[i][k * 2 + 1] += Random.Range(-60.0f, 60.0f) * transition;
                 }
             }
             
@@ -63,50 +64,73 @@ public class Dragon : MonoBehaviour
 
     IEnumerator Running()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            var t = new JointMotor
-            {
-                force = 10000,
-                freeSpin = false,
-                targetVelocity = Genetic[State][i * 2] > Arms[i].Leg.transform.rotation.x ? 1000 : -1000
-            };
-            // Arms[i].Leg.GetComponent<HingeJoint>().motor = t;
-            Arms[i].Leg.transform.RotateAround(Vector3.zero, new Vector3(1, 0, 0), Genetic[State][i * 2]);
-            t.targetVelocity = Genetic[State][i * 2 + 1];
-            // Arms[i].LegHinge.GetComponent<HingeJoint>().motor = t;
-            Arms[i].Leg.transform.RotateAround(Vector3.zero, new Vector3(1, 0, 0), Genetic[State][i * 2 + 1]);
-        }
-    }
-
-    int frame = 0;
-    private void FixedUpdate()
-    {
-        frame++;
-        if (Move.Count != 0)
+        while (true)
         {
             for (int i = 0; i < 4; i++)
             {
-                Arms[i].Leg.transform.Rotate(new Vector3(1, 0, 0), Move[i * 2] * Time.fixedDeltaTime * 5);
-                Arms[i].Leg.transform.Rotate(new Vector3(1, 0, 0), Move[i * 2 + 1] * Time.fixedDeltaTime * 5);
+                var t = new JointMotor
+                {
+                    force = 2000,
+                    freeSpin = false,
+                    targetVelocity = Genetic[State][i * 2] > Arms[i].Leg.transform.rotation.x ? 200 : -200
+                };
+                Arms[i].Leg.GetComponent<HingeJoint>().useMotor = true;
+                Arms[i].Leg.GetComponent<HingeJoint>().motor = t;
+                t.targetVelocity = Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x ? 200 : -200;
+                Arms[i].LegHinge.GetComponent<HingeJoint>().useMotor = true;
+                Arms[i].LegHinge.GetComponent<HingeJoint>().motor = t;
             }
-        }
-        if (frame % 10 == 0)
-        {
+
             State++;
-            Move.Clear();
             if (State == Genetic.Count)
             {
                 State = 0;
             }
+            yield return new WaitForSeconds(0.25f);
+        }
+    }
 
+    private void Update()
+    {
+        if (Genetic == null)
+        {
+            return;
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            var leg = Arms[i].Leg.GetComponent<HingeJoint>();
+            var leghinge = Arms[i].LegHinge.GetComponent<HingeJoint>();
 
-            for (int i = 0; i < 4; i++)
+            if (leg.motor.targetVelocity > 0)
             {
-                Move.Add(Arms[i / 2].Leg.transform.rotation.x - Genetic[State][i]);
-                Move.Add(Arms[i / 2].LegHinge.transform.rotation.x - Genetic[State][i + 1]);
+                if (leg.transform.rotation.x > Genetic[State][i * 2])
+                {
+                    leg.useMotor = false;
+                }
             }
-            frame = 0;
+            else
+            {
+                if (leg.transform.rotation.x < Genetic[State][i * 2])
+                {
+                    leg.useMotor = false;
+                }
+            }
+
+            if (leghinge.motor.targetVelocity > 0)
+            {
+                if (leghinge.transform.rotation.x > Genetic[State][i * 2 + 1])
+                {
+                    leg.useMotor = false;
+                }
+            }
+            else
+            {
+                if (Arms[i].LegHinge.transform.rotation.x < Genetic[State][i * 2 + 1])
+                {
+                    leg.useMotor = false;
+                }
+            }
+
         }
 
     }    

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 using GeneticType = System.Collections.Generic.List<System.Collections.Generic.List<float>>;
@@ -60,6 +61,22 @@ public class GAManager : MonoBehaviour
         CrossDragon();
     }
 
+    void Save(int gen)
+    {
+        StreamWriter sw = new StreamWriter(@"C:\Users\aoika\Desktop\git\Genetic-Algorithm\data\" + gen + ".txt");
+
+        for (int i = 0; i < LivedDragon.Capacity; i++)
+        {
+            sw.Write($"{i + 1} : ");
+            for (int k = 0; k < LivedDragon[i].Count - 1; k++)
+            {
+                sw.Write($"{LivedDragon[i][k]}, ");
+            }
+            sw.WriteLine($"{LivedDragon[i][LivedDragon[i].Count - 1]}");
+        }
+        sw.Close();
+    }
+
     void SurviveDragon()
     {
         for (int i = 0; i < (int)(GenerateDragon.Count * LiveRatio); i++)
@@ -75,7 +92,6 @@ public class GAManager : MonoBehaviour
 
     void CrossDragon()
     {
-        Debug.Log(Transition);
         GenerateDragon.Clear();
         for (int k = 0; k < CreateDragon; k++)
         {
@@ -83,7 +99,7 @@ public class GAManager : MonoBehaviour
             var data = Instantiate(
                         Dragon,
                         new Vector3(Position, 1.3f, 0.0f),
-                        Quaternion.identity).GetComponent<Dragon>();
+                        Quaternion.Euler(0f,45f,0f)).GetComponent<Dragon>();
             if (LivedDragon.Count == 0)
             {
                 data.CreateGenetic();
@@ -96,7 +112,6 @@ public class GAManager : MonoBehaviour
             GenerateDragon.Add(data);
         }
         LivedDragon.Clear();
-        Debug.Log("생성끝");
     }
         
 }

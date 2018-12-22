@@ -280,7 +280,7 @@ PrefabInstance:
     - target: {fileID: 5379095529888608779, guid: 4601c137fc29e3344b51cc5fcf85efda,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 1.31
       objectReference: {fileID: 0}
     - target: {fileID: 5379095529888608779, guid: 4601c137fc29e3344b51cc5fcf85efda,
         type: 3}
@@ -441,10 +441,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Dragon: {fileID: 1549718950482816739, guid: 4601c137fc29e3344b51cc5fcf85efda, type: 3}
-  CreateDragon: 40
+  CreateDragon: 120
   Gen: 0
-  LiveRatio: 0.25
-  Transition: 0.025
+  LiveRatio: 0.1
+  Transition: 0.05
   NextGenTime: 10
 --- !u!4 &997350038
 Transform:
