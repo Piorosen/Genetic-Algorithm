@@ -54,9 +54,9 @@ public class Dragon : MonoBehaviour
             {
                 for (int k = 0; k < Genetic[i].Count / 2; k++)
                 {
-                    // Genetic[i][k * 2] += (Random.Range(-15.0f, 30.0f) * transition);
+                    Genetic[i][k * 2] += (Random.Range(-15.0f, 30.0f) * transition);
                     Genetic[i][k * 2] = Mathf.Clamp(Genetic[i][k * 2], -15f, 30f);
-                    // Genetic[i][k * 2 + 1] += (Random.Range(-60.0f, 60.0f) * transition);
+                    Genetic[i][k * 2 + 1] += (Random.Range(-60.0f, 60.0f) * transition);
                     Genetic[i][k * 2 + 1] = Mathf.Clamp(Genetic[i][k * 2 + 1], -60f, 60f);
                 }
             }
@@ -70,17 +70,57 @@ public class Dragon : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
+                var leg = Arms[i].Leg.GetComponent<HingeJoint>();
+                var legHinge = Arms[i].LegHinge.GetComponent<HingeJoint>();
                 var t = new JointMotor
                 {
                     force = 2000,
                     freeSpin = false,
                     targetVelocity = Genetic[State][i * 2] > Arms[i].Leg.transform.rotation.x ? 200 : -200
                 };
-                Arms[i].Leg.GetComponent<HingeJoint>().useMotor = true;
-                Arms[i].Leg.GetComponent<HingeJoint>().motor = t;
+
+                leg.motor = t;
+
                 t.targetVelocity = Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x ? 200 : -200;
-                Arms[i].LegHinge.GetComponent<HingeJoint>().useMotor = true;
                 Arms[i].LegHinge.GetComponent<HingeJoint>().motor = t;
+
+                var joint = new JointLimits
+                {
+                    bounciness = 0.0f,
+                    bounceMinVelocity = 0.002f,
+                    contactDistance = 0,
+                    max = 60f,
+                    min = -60f
+                };
+
+                if (Genetic[State][i * 2] > Arms[i].LegHinge.transform.rotation.x)
+                {
+                    joint.max = Genetic[State][i * 2];
+                }
+                else
+                {
+                    joint.min = Genetic[State][i * 2];
+                }
+
+                leg.limits = joint;
+
+                joint = new JointLimits
+                {
+                    bounciness = 0.0f,
+                    bounceMinVelocity = 0.002f,
+                    contactDistance = 0,
+                    max = 60f,
+                    min = -60f
+                };
+                if (Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x)
+                {
+                    joint.max = Genetic[State][i * 2 + 1];
+                }
+                else
+                {
+                    joint.min = Genetic[State][i * 2 + 1];
+                }
+                legHinge.limits = joint;
             }
 
             State++;
@@ -94,47 +134,7 @@ public class Dragon : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Genetic == null)
-        {
-            return;
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            var leg = Arms[i].Leg.GetComponent<HingeJoint>();
-            var leghinge = Arms[i].LegHinge.GetComponent<HingeJoint>();
-
-            if (leg.motor.targetVelocity > 0)
-            {
-                if (leg.transform.rotation.x > Genetic[State][i * 2])
-                {
-                    leg.useMotor = false;
-                }
-            }
-            else
-            {
-                if (leg.transform.rotation.x < Genetic[State][i * 2])
-                {
-                    leg.useMotor = false;
-                }
-            }
-
-            if (leghinge.motor.targetVelocity > 0)
-            {
-                if (leghinge.transform.rotation.x > Genetic[State][i * 2 + 1])
-                {
-                    leg.useMotor = false;
-                }
-            }
-            else
-            {
-                if (Arms[i].LegHinge.transform.rotation.x < Genetic[State][i * 2 + 1])
-                {
-                    leg.useMotor = false;
-                }
-            }
-
-        }
-
+        
     }    
 
 }
