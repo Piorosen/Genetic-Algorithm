@@ -54,8 +54,10 @@ public class Dragon : MonoBehaviour
             {
                 for (int k = 0; k < Genetic[i].Count / 2; k++)
                 {
-                    Genetic[i][k * 2] += Random.Range(-15.0f, 30.0f) * transition;
-                    Genetic[i][k * 2 + 1] += Random.Range(-60.0f, 60.0f) * transition;
+                    // Genetic[i][k * 2] += (Random.Range(-15.0f, 30.0f) * transition);
+                    Genetic[i][k * 2] = Mathf.Clamp(Genetic[i][k * 2], -15f, 30f);
+                    // Genetic[i][k * 2 + 1] += (Random.Range(-60.0f, 60.0f) * transition);
+                    Genetic[i][k * 2 + 1] = Mathf.Clamp(Genetic[i][k * 2 + 1], -60f, 60f);
                 }
             }
             
@@ -90,7 +92,7 @@ public class Dragon : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (Genetic == null)
         {

@@ -11,11 +11,11 @@ public class GAManager : MonoBehaviour
     List<Dragon> GenerateDragon;
     List<GeneticType> LivedDragon;
 
-    public int CreateDragon = 20;
-    public int Gen = 0;
-    public float LiveRatio = 0.25f;
-    public float Transition = 0.2f;
-    public float NextGenTime = 10.0f;
+    public int CreateDragon;
+    public int Gen;
+    public float LiveRatio;
+    public float Transition;
+    public float NextGenTime;
     // Start is called before the first frame update
     void Start()
     {
@@ -57,22 +57,28 @@ public class GAManager : MonoBehaviour
             });
             Debug.Log($"이전 세대 최고 치 : {Gen - 1}\n{GenerateDragon[0].transform.GetChild(0).transform.position.z}");
             SurviveDragon();
+            Save(Gen);
         }
         CrossDragon();
     }
 
     void Save(int gen)
     {
-        StreamWriter sw = new StreamWriter(@"C:\Users\aoika\Desktop\git\Genetic-Algorithm\data\" + gen + ".txt");
+        StreamWriter sw = new StreamWriter(@"C:\Users\aoika\Desktop\git\Genetic-Algorithm\data\" + (gen - 1) + ".txt");
 
         for (int i = 0; i < LivedDragon.Capacity; i++)
         {
-            sw.Write($"{i + 1} : ");
-            for (int k = 0; k < LivedDragon[i].Count - 1; k++)
+            sw.WriteLine($"{i + 1} Genetic : {GenerateDragon[i].transform.GetChild(0).transform.position.z} Moved");
+            for (int w = 0; w < LivedDragon[w].Count; w++)
             {
-                sw.Write($"{LivedDragon[i][k]}, ");
+                sw.Write($"{w + 1} : ");
+                for (int k = 0; k < LivedDragon[i][w].Count - 1; k++)
+                {
+                    sw.Write($"{LivedDragon[i][w][k]}, ");
+                }
+                sw.WriteLine($"{LivedDragon[i][w][LivedDragon[i].Count - 1]}");
             }
-            sw.WriteLine($"{LivedDragon[i][LivedDragon[i].Count - 1]}");
+            sw.WriteLine();
         }
         sw.Close();
     }
