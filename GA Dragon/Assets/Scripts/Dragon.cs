@@ -59,12 +59,10 @@ public class Dragon : MonoBehaviour
                     if (transition >= tmp) 
                     {
                         Genetic[i][k * 2] = Random.Range(-15.0f, 30.0f);
-                        Debug.Log($"Genetic[{i}][{k * 2}]");
                     }
                     if (transition >= tmp2)
                     {
                         Genetic[i][k * 2] = Random.Range(-60.0f, 60.0f);
-                        Debug.Log($"Genetic[{i}][{k * 2}]");
                     }
                 }
             }

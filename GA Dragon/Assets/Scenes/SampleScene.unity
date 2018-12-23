@@ -451,7 +451,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Dragon: {fileID: 1549718950482816739, guid: 4601c137fc29e3344b51cc5fcf85efda, type: 3}
-  CreateDragon: 20
+  CreateDragon: 160
   Gen: 0
   LiveRatio: 0.25
   Transition: 0.1
