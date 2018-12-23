@@ -10,7 +10,7 @@ public class Dragon : MonoBehaviour
     public GeneticType Genetic;
 
     int GeneticSize = 4;
-    List<float> Move = new List<float>();
+    public List<float> Move = new List<float>();
 
     // Start is called before the first frame update
     void Start()
@@ -54,10 +54,18 @@ public class Dragon : MonoBehaviour
             {
                 for (int k = 0; k < Genetic[i].Count / 2; k++)
                 {
-                    Genetic[i][k * 2] += (Random.Range(-15.0f, 30.0f) * transition);
-                    Genetic[i][k * 2] = Mathf.Clamp(Genetic[i][k * 2], -15f, 30f);
-                    Genetic[i][k * 2 + 1] += (Random.Range(-60.0f, 60.0f) * transition);
-                    Genetic[i][k * 2 + 1] = Mathf.Clamp(Genetic[i][k * 2 + 1], -60f, 60f);
+                    float tmp = Random.value;
+                    float tmp2 = Random.value;
+                    if (transition >= tmp) 
+                    {
+                        Genetic[i][k * 2] = Random.Range(-15.0f, 30.0f);
+                        Debug.Log($"Genetic[{i}][{k * 2}]");
+                    }
+                    if (transition >= tmp2)
+                    {
+                        Genetic[i][k * 2] = Random.Range(-60.0f, 60.0f);
+                        Debug.Log($"Genetic[{i}][{k * 2}]");
+                    }
                 }
             }
             
@@ -129,12 +137,9 @@ public class Dragon : MonoBehaviour
                 State = 0;
             }
             yield return new WaitForSeconds(0.25f);
+
         }
     }
-
-    private void FixedUpdate()
-    {
-        
-    }    
+    
 
 }
