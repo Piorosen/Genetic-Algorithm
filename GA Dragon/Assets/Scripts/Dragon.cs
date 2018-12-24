@@ -11,7 +11,7 @@ public class Dragon : MonoBehaviour
 
     int GeneticSize = 4;
     public List<float> Move = new List<float>();
-
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -48,7 +48,18 @@ public class Dragon : MonoBehaviour
         }
         else
         {
-            Genetic = geneticData;
+            GeneticType type = new GeneticType();
+            for (int w = 0; w < geneticData.Count; w++)
+            {
+                List<float> q = new List<float>();
+                for (int e = 0; e < geneticData[w].Count; e++)
+                {
+                    q.Add(geneticData[w][e]);
+                }
+                type.Add(q);
+            }
+
+            Genetic = type;
 
             for (int i = 0; i < Genetic.Count; i++)
             {
@@ -62,11 +73,10 @@ public class Dragon : MonoBehaviour
                     }
                     if (transition >= tmp2)
                     {
-                        Genetic[i][k * 2] = Random.Range(-60.0f, 60.0f);
+                        Genetic[i][k * 2 + 1] = Random.Range(-60.0f, 60.0f);
                     }
                 }
             }
-            
         }
     }
 
@@ -129,6 +139,7 @@ public class Dragon : MonoBehaviour
                 legHinge.limits = joint;
             }
 
+            Move = Genetic[State];
             State++;
             if (State == Genetic.Count)
             {

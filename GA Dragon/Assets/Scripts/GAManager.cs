@@ -9,7 +9,7 @@ public class GAManager : MonoBehaviour
     public GameObject Dragon;
 
     List<Dragon> GenerateDragon;
-    List<GeneticType> LivedDragon;
+    List<Dragon> LivedDragon;
 
     public int CreateDragon;
     public int Gen;
@@ -20,7 +20,7 @@ public class GAManager : MonoBehaviour
     void Start()
     {
         GenerateDragon = new List<Dragon>();
-        LivedDragon = new List<GeneticType>();
+        LivedDragon = new List<Dragon>();
         StartCoroutine(Run());
     }
 
@@ -68,17 +68,18 @@ public class GAManager : MonoBehaviour
 
         for (int i = 0; i < LivedDragon.Count; i++)
         {
-            sw.WriteLine($"{i + 1} Genetic : {GenerateDragon[i].transform.GetChild(0).transform.position.z} Moved");
-            for (int w = 0; w < LivedDragon[i].Count; w++)
+            sw.WriteLine($"{i + 1} Genetic : {LivedDragon[i].transform.GetChild(0).transform.position.z} Moved");
+            for (int w = 0; w < LivedDragon[i].Genetic.Count; w++)
             {
                 sw.Write($"{w + 1} : ");
-                for (int k = 0; k < LivedDragon[i][w].Count - 1; k++)
+                for (int k = 0; k < LivedDragon[i].Genetic[w].Count; k++)
                 {
-                    sw.Write($"{LivedDragon[i][w][k]}, ");
+                    sw.Write($"{LivedDragon[i].Genetic[w][k]}, ");
                 }
-                sw.WriteLine($"{LivedDragon[i][w][LivedDragon[i].Count - 1]}");
+                sw.WriteLine();
             }
             sw.WriteLine();
+
         }
         sw.Close();
     }
@@ -89,12 +90,19 @@ public class GAManager : MonoBehaviour
 
         for (int i = 0; i < (int)(GenerateDragon.Count * LiveRatio); i++)
         {
-            LivedDragon.Add(GenerateDragon[i].Genetic);
+            LivedDragon.Add(GenerateDragon[i]);
+            string data = "";
+            for (int w = 0; w < GenerateDragon[i].Genetic[0].Count; w++)
+            {
+                data += GenerateDragon[i].Genetic[0][w] + ", ";
+            }
+            Debug.Log(data);
         }
         for (int i = 0; i < GenerateDragon.Count; i++)
         {
             Destroy(GenerateDragon[i].gameObject);
         }
+        GenerateDragon.Clear();
     }
 
     void CrossDragon()
@@ -119,18 +127,18 @@ public class GAManager : MonoBehaviour
                 {
                     if (i == 0)
                     {
-                        data.CreateGenetic(0, LivedDragon[k]);
+                        data.CreateGenetic(0, LivedDragon[k].Genetic);
                     }
                     else
                     {
-                        data.CreateGenetic(Transition, LivedDragon[k]);
+                        data.CreateGenetic(Transition, LivedDragon[k].Genetic);
                     }
-                    
-                }
 
+                }
                 GenerateDragon.Add(data);
             }
         }
     }
-        
+
+
 }
