@@ -11,12 +11,34 @@ public class GAManager : MonoBehaviour
     List<Dragon> GenerateDragon;
     List<Dragon> LivedDragon;
 
+    /// <summary>
+    /// 생성할 드라군의 갯수
+    /// </summary>
     public int CreateDragon;
+
+    /// <summary>
+    /// 현재 세대
+    /// </summary>
     public int Gen;
+
+    /// <summary>
+    /// 생존 비율
+    /// </summary>
     public float LiveRatio;
+
+    /// <summary>
+    /// 변이율
+    /// </summary>
     public float Transition;
+
+    /// <summary>
+    /// 생존시간
+    /// </summary>
     public float NextGenTime;
-    // Start is called before the first frame update
+
+    /// <summary>
+    /// 시작
+    /// </summary>
     void Start()
     {
         GenerateDragon = new List<Dragon>();
@@ -24,6 +46,10 @@ public class GAManager : MonoBehaviour
         StartCoroutine(Run());
     }
 
+    /// <summary>
+    /// 드라군의 생존이야기가 시작됩니다.
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Run()
     {
         while (true)
@@ -33,28 +59,14 @@ public class GAManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 세대 진화 시작
+    /// </summary>
     void NextGenerate()
     {
         Gen++;
         if (GenerateDragon.Count != 0)
         {
-            GenerateDragon.Sort((x, y) =>
-            {
-                var Com1 = x.transform.GetChild(0).transform.position;
-                var Com2 = y.transform.GetChild(0).transform.position;
-                if (Com1.z > Com2.z)
-                {
-                    return -1;
-                }
-                else if (Com1.z < Com2.z)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            });
             Debug.Log($"이전 세대 최고 치 : {Gen - 1}\n{GenerateDragon[0].transform.GetChild(0).transform.position.z}");
             SurviveDragon();
             Save(Gen);
@@ -62,9 +74,13 @@ public class GAManager : MonoBehaviour
         CrossDragon();
     }
 
+    /// <summary>
+    /// 파일로 저장하는 코드
+    /// </summary>
+    /// <param name="gen"></param>
     void Save(int gen)
     {
-        StreamWriter sw = new StreamWriter(@"C:\Users\aoika\Desktop\git\Genetic-Algorithm\data\" + (gen - 1) + ".txt");
+        StreamWriter sw = new StreamWriter(@"Genetic-Algorithm\data\" + (gen - 1) + ".txt");
 
         for (int i = 0; i < LivedDragon.Count; i++)
         {
@@ -84,6 +100,9 @@ public class GAManager : MonoBehaviour
         sw.Close();
     }
 
+    /// <summary>
+    /// 드라군의 생존비율에 맞게끔 수정
+    /// </summary>
     void SurviveDragon()
     {
         LivedDragon.Clear();
@@ -91,12 +110,6 @@ public class GAManager : MonoBehaviour
         for (int i = 0; i < (int)(GenerateDragon.Count * LiveRatio); i++)
         {
             LivedDragon.Add(GenerateDragon[i]);
-            string data = "";
-            for (int w = 0; w < GenerateDragon[i].Genetic[0].Count; w++)
-            {
-                data += GenerateDragon[i].Genetic[0][w] + ", ";
-            }
-            Debug.Log(data);
         }
         for (int i = 0; i < GenerateDragon.Count; i++)
         {
@@ -105,6 +118,9 @@ public class GAManager : MonoBehaviour
         GenerateDragon.Clear();
     }
 
+    /// <summary>
+    /// 드라군 생성
+    /// </summary>
     void CrossDragon()
     {
         GenerateDragon.Clear();

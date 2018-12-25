@@ -6,5 +6,4 @@ public class Arm
 {
     public GameObject Leg;
     public GameObject LegHinge;
-    
 }

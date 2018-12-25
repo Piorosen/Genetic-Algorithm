@@ -3,16 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using GeneticType = System.Collections.Generic.List<System.Collections.Generic.List<float>>;
+
+
 public class Dragon : MonoBehaviour
 {
-    List<Arm> Arms;
     public int State = 0;
     public GeneticType Genetic;
 
-    int GeneticSize = 4;
     public List<float> Move = new List<float>();
+
+    int GeneticSize = 4;
+    List<Arm> Arms;
     
-    // Start is called before the first frame update
+    /// <summary>
+    /// 관절 데이터를 얻어옵니다.
+    /// </summary>
     void Start()
     {
         Arms = new List<Arm>();
@@ -31,7 +36,7 @@ public class Dragon : MonoBehaviour
 
     public void CreateGenetic(float transition = 0, GeneticType geneticData = null)
     {
-        Genetic = new List<List<float>>();
+        Genetic = new GeneticType();
         Genetic.Clear();
         if (geneticData == null)
         {
@@ -105,8 +110,8 @@ public class Dragon : MonoBehaviour
                     bounciness = 0.0f,
                     bounceMinVelocity = 0.002f,
                     contactDistance = 0,
-                    max = 60f,
-                    min = -60f
+                    max = 30f,
+                    min = -15f
                 };
 
                 if (Genetic[State][i * 2] > Arms[i].LegHinge.transform.rotation.x)
