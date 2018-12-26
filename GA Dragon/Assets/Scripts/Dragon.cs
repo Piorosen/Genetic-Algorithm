@@ -33,7 +33,11 @@ public class Dragon : MonoBehaviour
         StartCoroutine(Running());
     }
     
-
+    /// <summary>
+    /// 유전자 생성, () 이 될 경우 랜덤으로 생성
+    /// </summary>
+    /// <param name="transition">변이율</param>
+    /// <param name="geneticData">이전 데이터</param>
     public void CreateGenetic(float transition = 0, GeneticType geneticData = null)
     {
         Genetic = new GeneticType();
@@ -85,12 +89,17 @@ public class Dragon : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 시작
+    /// </summary>
+    /// <returns>리턴값, 대기하는 함수임</returns>
     IEnumerator Running()
     {
         while (true)
         {
             for (int i = 0; i < 4; i++)
             {
+                #region 관절 이동할 방향 설정
                 var leg = Arms[i].Leg.GetComponent<HingeJoint>();
                 var legHinge = Arms[i].LegHinge.GetComponent<HingeJoint>();
                 var t = new JointMotor
@@ -123,6 +132,9 @@ public class Dragon : MonoBehaviour
                     joint.min = Genetic[State][i * 2];
                 }
 
+                #endregion
+
+                #region 
                 leg.limits = joint;
 
                 joint = new JointLimits
@@ -143,7 +155,7 @@ public class Dragon : MonoBehaviour
                 }
                 legHinge.limits = joint;
             }
-
+            #endregion
             Move = Genetic[State];
             State++;
             if (State == Genetic.Count)
