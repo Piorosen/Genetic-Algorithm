@@ -11,6 +11,7 @@ public class GAManager : MonoBehaviour
     List<Dragon> GenerateDragon;
     List<Dragon> LivedDragon;
 
+    public bool DoYouWantWatchToBestSolusion = false;
 
     GeneticType FarTest = new GeneticType();
     /// <summary>
@@ -193,7 +194,10 @@ public class GAManager : MonoBehaviour
                     {
                         data.CreateGenetic(Transition, LivedDragon[k].Genetic);
                     }
-                    data.CreateGenetic(0, FarTest);
+                    if (DoYouWantWatchToBestSolusion)
+                    {
+                        data.CreateGenetic(0, FarTest);
+                    }
                 }
                 GenerateDragon.Add(data);
             }
