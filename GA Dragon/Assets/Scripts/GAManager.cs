@@ -11,6 +11,8 @@ public class GAManager : MonoBehaviour
     List<Dragon> GenerateDragon;
     List<Dragon> LivedDragon;
 
+
+    GeneticType FarTest = new GeneticType();
     /// <summary>
     /// 생성할 드라군의 갯수
     /// </summary>
@@ -41,6 +43,23 @@ public class GAManager : MonoBehaviour
     /// </summary>
     void Start()
     {
+        FarTest.Add(new List<float>
+        {
+            -14.77732f, -14.70525f, -10.50904f, 34.67912f, -12.65775f, -25.13045f, 24.35605f, 32.6796f,
+        });
+        FarTest.Add(new List<float>
+        {
+            -9.569241f, 33.28701f, 20.17009f, 34.26298f, 19.53046f, 38.34041f, 12.75441f, -55.01688f
+        });
+        FarTest.Add(new List<float>
+        {
+            -4.35068f, 18.98749f, 3.297448f, -37.4022f, 18.82948f, 56.68201f, 10.95352f, 44.01205f
+        });
+        FarTest.Add(new List<float>
+        {
+            14.8979f, -14.26002f, 26.40041f, -32.22816f, 0.8945265f, -44.06739f, -10.30839f, -2.96925f,
+        });
+
         GenerateDragon = new List<Dragon>();
         LivedDragon = new List<Dragon>();
         StartCoroutine(Run());
@@ -67,11 +86,34 @@ public class GAManager : MonoBehaviour
         Gen++;
         if (GenerateDragon.Count != 0)
         {
+            DragonSort();
             Debug.Log($"이전 세대 최고 치 : {Gen - 1}\n{GenerateDragon[0].transform.GetChild(0).transform.position.z}");
-            SurviveDragon();
             Save(Gen);
+            SurviveDragon();
+            
         }
         CrossDragon();
+    }
+
+    void DragonSort()
+    {
+        GenerateDragon.Sort((x, y) =>
+        {
+            var Com1 = x.transform.GetChild(0).transform.position;
+            var Com2 = y.transform.GetChild(0).transform.position;
+            if (Com1.z > Com2.z)
+            {
+                return -1;
+            }
+            else if (Com1.z < Com2.z)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        });
     }
 
     /// <summary>
@@ -80,17 +122,19 @@ public class GAManager : MonoBehaviour
     /// <param name="gen"></param>
     void Save(int gen)
     {
-        StreamWriter sw = new StreamWriter(@"Genetic-Algorithm\data\" + (gen - 1) + ".txt");
+        StreamWriter sw = new StreamWriter(@"data\" + (gen - 1) + ".txt");
 
-        for (int i = 0; i < LivedDragon.Count; i++)
+        List<Dragon> Data = GenerateDragon;
+
+        for (int i = 0; i < Data.Count; i++)
         {
-            sw.WriteLine($"{i + 1} Genetic : {LivedDragon[i].transform.GetChild(0).transform.position.z} Moved");
-            for (int w = 0; w < LivedDragon[i].Genetic.Count; w++)
+            sw.WriteLine($"{i + 1} Genetic : {Data[i].transform.GetChild(0).transform.position.z} Moved");
+            for (int w = 0; w < Data[i].Genetic.Count; w++)
             {
                 sw.Write($"{w + 1} : ");
-                for (int k = 0; k < LivedDragon[i].Genetic[w].Count; k++)
+                for (int k = 0; k < Data[i].Genetic[w].Count; k++)
                 {
-                    sw.Write($"{LivedDragon[i].Genetic[w][k]}, ");
+                    sw.Write($"{Data[i].Genetic[w][k]}, ");
                 }
                 sw.WriteLine();
             }
@@ -149,7 +193,7 @@ public class GAManager : MonoBehaviour
                     {
                         data.CreateGenetic(Transition, LivedDragon[k].Genetic);
                     }
-
+                    data.CreateGenetic(0, FarTest);
                 }
                 GenerateDragon.Add(data);
             }

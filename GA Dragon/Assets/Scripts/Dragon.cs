@@ -42,6 +42,7 @@ public class Dragon : MonoBehaviour
     {
         Genetic = new GeneticType();
         Genetic.Clear();
+        // 유전 데이터 생성
         if (geneticData == null)
         {
             for (int k = 0; k < GeneticSize; k++)
@@ -57,6 +58,7 @@ public class Dragon : MonoBehaviour
         }
         else
         {
+            // 유전 데이터 클론
             GeneticType type = new GeneticType();
             for (int w = 0; w < geneticData.Count; w++)
             {
@@ -99,63 +101,35 @@ public class Dragon : MonoBehaviour
         {
             for (int i = 0; i < 4; i++)
             {
-                #region 관절 이동할 방향 설정
                 var leg = Arms[i].Leg.GetComponent<HingeJoint>();
                 var legHinge = Arms[i].LegHinge.GetComponent<HingeJoint>();
-                var t = new JointMotor
+                #region 관절 이동할 방향 설정
+                leg.motor = new JointMotor
                 {
                     force = 2000,
-                    freeSpin = false,
                     targetVelocity = Genetic[State][i * 2] > Arms[i].Leg.transform.rotation.x ? 200 : -200
                 };
-
-                leg.motor = t;
-
-                t.targetVelocity = Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x ? 200 : -200;
-                Arms[i].LegHinge.GetComponent<HingeJoint>().motor = t;
-
-                var joint = new JointLimits
+                
+                legHinge.motor = new JointMotor
                 {
-                    bounciness = 0.0f,
-                    bounceMinVelocity = 0.002f,
-                    contactDistance = 0,
-                    max = 30f,
-                    min = -15f
+                    force = 2000,
+                    targetVelocity = Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x ? 200 : -200
                 };
-
-                if (Genetic[State][i * 2] > Arms[i].LegHinge.transform.rotation.x)
-                {
-                    joint.max = Genetic[State][i * 2];
-                }
-                else
-                {
-                    joint.min = Genetic[State][i * 2];
-                }
-
                 #endregion
 
-                #region 
-                leg.limits = joint;
-
-                joint = new JointLimits
+                #region 관절의 최대 회전 각 설정
+                leg.limits = new JointLimits
                 {
-                    bounciness = 0.0f,
-                    bounceMinVelocity = 0.002f,
-                    contactDistance = 0,
-                    max = 60f,
-                    min = -60f
+                    max = (Genetic[State][i * 2] > Arms[i].LegHinge.transform.rotation.x) ? Genetic[State][i * 2] : 30f,
+                    min = (Genetic[State][i * 2] > Arms[i].LegHinge.transform.rotation.x) ? -15f : Genetic[State][i * 2]
                 };
-                if (Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x)
+                legHinge.limits = new JointLimits
                 {
-                    joint.max = Genetic[State][i * 2 + 1];
-                }
-                else
-                {
-                    joint.min = Genetic[State][i * 2 + 1];
-                }
-                legHinge.limits = joint;
+                    max = (Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x) ? Genetic[State][i * 2 + 1] : 60f,
+                    min = (Genetic[State][i * 2 + 1] > Arms[i].LegHinge.transform.rotation.x) ? -60f : Genetic[State][i * 2 + 1]
+                };
+                #endregion
             }
-            #endregion
             Move = Genetic[State];
             State++;
             if (State == Genetic.Count)
@@ -163,7 +137,6 @@ public class Dragon : MonoBehaviour
                 State = 0;
             }
             yield return new WaitForSeconds(0.25f);
-
         }
     }
     
